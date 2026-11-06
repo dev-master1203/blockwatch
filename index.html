@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- frame-ancestors is deliberately omitted: browsers ignore it in a <meta> tag and it
+     needs a real response header, which GitHub Pages cannot set. See SECURITY.md. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; form-action 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src https://api.mcsrvstat.us;">
+<meta name="referrer" content="no-referrer">
+<title>Blockwatch</title>
+<meta name="description" content="Minecraft server status checker, RAM and JVM flag planner, and a saved server list.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Block<span>watch</span></h1>
+  <p class="tag">Server status, RAM planning, and a saved list for the Minecraft servers you run.</p>
+</header>
+
+<nav role="tablist" aria-label="Sections">
+  <button role="tab" id="t-status" aria-selected="true" aria-controls="p-status" data-tab="status">Server status</button>
+  <button role="tab" id="t-ram" aria-selected="false" aria-controls="p-ram" data-tab="ram">RAM &amp; flags</button>
+  <button role="tab" id="t-saved" aria-selected="false" aria-controls="p-saved" data-tab="saved">My servers</button>
+</nav>
+
+<!-- ===================== STATUS ===================== -->
+<section id="p-status" role="tabpanel" aria-labelledby="t-status">
+  <div class="card">
+    <h2>Check a server</h2>
+    <div class="row">
+      <div>
+        <label for="addr">Address</label>
+        <input type="text" id="addr" maxlength="263" spellcheck="false" autocapitalize="off"
+               autocomplete="off" placeholder="play.example.com or 1.2.3.4:25565" value="mc.hypixel.net">
+      </div>
+      <div class="narrow">
+        <label for="edition">Edition</label>
+        <select id="edition">
+          <option value="java">Java</option>
+          <option value="bedrock">Bedrock</option>
+        </select>
+      </div>
+      <button class="btn" id="go">Check</button>
+    </div>
+    <p class="hint">Live data from the public mcsrvstat.us API, which caches results for a few minutes. Nothing you type is sent anywhere else.</p>
+    <div id="out" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- ===================== RAM ===================== -->
+<section id="p-ram" class="hide" role="tabpanel" aria-labelledby="t-ram">
+  <div class="card">
+    <h2>RAM &amp; JVM flag planner</h2>
+    <div class="row">
+      <div>
+        <label for="stype">Server software</label>
+        <select id="stype">
+          <option value="vanilla">Vanilla</option>
+          <option value="paper" selected>Paper / Spigot</option>
+          <option value="fabric">Fabric (modded)</option>
+          <option value="forge">Forge / NeoForge (modded)</option>
+        </select>
+      </div>
+      <div>
+        <label for="hostram">RAM in your PC (GB)</label>
+        <select id="hostram">
+          <option value="8">8</option>
+          <option value="16" selected>16</option>
+          <option value="32">32</option>
+          <option value="64">64</option>
+        </select>
+      </div>
+    </div>
+    <div class="row sliders">
+      <div>
+        <label for="players">Expected players: <b id="players-v">6</b></label>
+        <input type="range" id="players" min="1" max="60" value="6">
+      </div>
+      <div>
+        <label for="mods">Mods / plugins: <b id="mods-v">80</b></label>
+        <input type="range" id="mods" min="0" max="400" value="80">
+      </div>
+      <div>
+        <label for="vd">View distance: <b id="vd-v">8</b></label>
+        <input type="range" id="vd" min="3" max="16" value="8">
+      </div>
+    </div>
+    <div class="grid" id="ram-stats"></div>
+    <div id="ram-warn"></div>
+
+    <h2 class="spaced">Recommended start command</h2>
+    <pre class="flags" id="flags"></pre>
+    <button class="btn ghost" id="copy">Copy command</button>
+    <span id="copied" class="copied"></span>
+    <p class="hint">Uses Aikar's G1GC flags, the community standard for Minecraft servers. Paste it into your start
+      <code>.bat</code> file and change <code>server.jar</code> to your jar's actual name.</p>
+  </div>
+</section>
+
+<!-- ===================== SAVED ===================== -->
+<section id="p-saved" class="hide" role="tabpanel" aria-labelledby="t-saved">
+  <div class="card">
+    <h2>My servers</h2>
+    <div class="row">
+      <div>
+        <label for="newsrv">Add an address</label>
+        <input type="text" id="newsrv" maxlength="263" spellcheck="false" autocapitalize="off"
+               autocomplete="off" placeholder="play.example.com">
+      </div>
+      <button class="btn" id="add">Add</button>
+    </div>
+    <div id="saved-msg"></div>
+    <ul class="servers" id="srvlist"></ul>
+    <p class="hint">Stored in this browser only, capped at 20 entries. Nothing is uploaded and there is no account.</p>
+  </div>
+</section>
+
+<footer>
+  Built as a CYBER 110 project. Status data from
+  <a href="https://api.mcsrvstat.us" target="_blank" rel="noopener noreferrer">mcsrvstat.us</a>.
+  See <a href="SECURITY.md" rel="noopener">SECURITY.md</a> for the security review.
+</footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
